@@ -1,10 +1,9 @@
 import React, {RefObject} from 'react';
 import Chart, {ChartConfiguration} from 'chart.js';
 import {Card} from 'react-bootstrap';
-import TableCPU from './TableCPU';
 
 interface IStackedBarChart {
-    data: (number[])[]
+    data: (number[])[];
 }
 
 class StackedBarChartCPU extends React.Component<IStackedBarChart, IStackedBarChart> {
@@ -74,12 +73,9 @@ class StackedBarChartCPU extends React.Component<IStackedBarChart, IStackedBarCh
 
     render() {
         return (
-            <Card bg="light" text='dark' style={{width: "30rem"}}>
+            <Card bg="light" text="dark" style={{width: "30rem"}}>
                 <Card.Header>CPU</Card.Header>
                 <canvas id="stackedBarChartCanvas" ref={this.stackedBarChartRef}/>
-                <Card.Body>
-                    <TableCPU data={this.props.data}/>
-                </Card.Body>
             </Card>
         );
     }

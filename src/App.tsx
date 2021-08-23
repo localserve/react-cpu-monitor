@@ -15,15 +15,13 @@ const TIMING = 3000;
 async function fetchData() {
     const res = await fetch('/cpu_info');
     const data = JSON.parse((await res.json()).cpu_info);
-    const cpus = data.cpus;
+    const {cpus, memory} = data;
     const minUser = Math.min.apply(null, cpus.map((i: any) => i.user)) - 1000;
     const minSys = Math.min.apply(null, cpus.map((i: any) => i.sys)) - 1000;
     const minIdle = Math.min.apply(null, cpus.map((i: any) => i.idle)) - 1000;
     const user = cpus.map((i: any) => (i.user - minUser) % 10000 / 200 % 100).map((i: number) => Math.floor(i));
     const sys = cpus.map((i: any) => (i.sys - minSys) % 10000 / 200 % 100).map((i: number) => Math.floor(i));
     const idle = cpus.map((i: any) => (i.idle - minIdle) % 10000 / 200 % 100).map((i: number) => Math.floor(i));
-
-    const memory = data.memory;
 
     const memoryData = {
         used: [Math.ceil(100 * memory.used / memory.total)],
@@ -44,7 +42,7 @@ function App() {
             setMemory(memoryData);
         }, TIMING);
         return () => clearInterval(id);
-    }, [cpu, memory]);
+    }, []);
 
     return (
         <>
