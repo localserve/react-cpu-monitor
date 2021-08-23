@@ -37,9 +37,14 @@ function App() {
     const [memory, setMemory] = useState({used: [50], free: [50]});
     useEffect(() => {
         const id = setInterval(async () => {
-            const {cpuData, memoryData} = await fetchData();
-            setCpu(cpuData);
-            setMemory(memoryData);
+            try {
+
+                const {cpuData, memoryData} = await fetchData();
+                setCpu(cpuData);
+                setMemory(memoryData);
+            } catch (e) {
+                console.log(e)
+            }
         }, TIMING);
         return () => clearInterval(id);
     }, []);
