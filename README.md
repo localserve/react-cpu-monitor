@@ -10,6 +10,12 @@ It is dependent upon [cpu-service](https://github.com/localserve/node-cpu-servic
 
 0. `git clone git@github.com:localserve/react-cpu-monitor.git`
 1. `cd react-cpu-monitor`
-2. `yarn`
+2. `npm install`
 3. Run cpu-service.
-4. `yarn start`
+4. `npm run build && npm run dev`
+
+## License
+
+MIT License
+
+Copyright (c) 2021-2025 localserve
