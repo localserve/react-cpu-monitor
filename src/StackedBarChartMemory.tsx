@@ -1,85 +1,52 @@
-import React, {RefObject} from 'react';
-import {Card} from 'react-bootstrap';
-import Chart, {ChartConfiguration, ChartData} from 'chart.js';
-import TableMemory from './TableMemory';
+import { useRef, useEffect } from "react";
+import { Card } from "react-bootstrap";
+import Chart, { ChartConfiguration, ChartData } from "chart.js/auto";
+import TableMemory from "./TableMemory";
 
 interface IMemory {
-    used: number[]
-    free: number[]
+  used: number[];
+  free: number[];
 }
 
-class StackedBarChartMemory extends React.Component<IMemory, IMemory> {
-    private stackedBarChartRef: RefObject<HTMLCanvasElement>;
+export default function StackedBarChartMemory({ used, free }: IMemory) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const chartRef = useRef<Chart | null>(null);
 
-    constructor(props: IMemory) {
-        super(props);
-        this.stackedBarChartRef = React.createRef();
-        this.drawStackedBarChart = this.drawStackedBarChart.bind(this);
+  useEffect(() => {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+
+    if (chartRef.current) {
+      chartRef.current.destroy();
     }
 
-    drawStackedBarChart() {
-        const canvas = this.stackedBarChartRef.current as HTMLCanvasElement;
-        const context = canvas.getContext('2d') as CanvasRenderingContext2D;
-        const data: ChartData = {
-            labels: ['RAM'],
-            datasets: [
-                {
-                    label: 'used',
-                    backgroundColor: '#ff0000',
-                    data: this.props.used
-                },
-                {
-                    label: 'free',
-                    backgroundColor: '#00ff00',
-                    data: this.props.free
-                }
-            ]
-        };
-        const configuration: ChartConfiguration = {
-            type: 'bar',
-            data: data,
-            options: {
-                animation: {
-                    duration: 0
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false
-                },
-                responsive: true,
-                scales: {
-                    xAxes: [{
-                        stacked: true
-                    }],
-                    yAxes: [{
-                        stacked: true
-                    }]
-                }
-            }
-        };
-        new Chart(context, configuration);
-    }
+    const data: ChartData = {
+      labels: ["RAM"],
+      datasets: [
+        { label: "used", backgroundColor: "#ff0000", data: used },
+        { label: "free", backgroundColor: "#00ff00", data: free },
+      ],
+    };
 
-    componentDidMount() {
-        this.drawStackedBarChart();
-    }
+    const config: ChartConfiguration = {
+      type: "bar",
+      data,
+      options: {
+        animation: { duration: 0 },
+        responsive: true,
+      },
+    };
 
-    componentDidUpdate(prevProps: Readonly<IMemory>, prevState: Readonly<IMemory>, snapshot?: any) {
-        this.drawStackedBarChart();
-    }
+    chartRef.current = new Chart(ctx, config);
+  }, [used, free]);
 
-    render() {
-        return (
-            <Card bg="light" text='dark' style={{width: "30rem"}}>
-                <Card.Header>Memory</Card.Header>
-                <canvas id="stackedBarChartMemory" ref={this.stackedBarChartRef}/>
-                <Card.Body>
-                    <TableMemory used={this.props.used} free={this.props.free}/>
-                </Card.Body>
-            </Card>
-        );
-    }
-
+  return (
+    <Card bg="light" text="dark" style={{ width: "30rem" }}>
+      <Card.Header>Memory</Card.Header>
+      <canvas id="stackedBarChartCanvas" ref={canvasRef} />
+      <Card.Body>
+        <TableMemory used={used} free={free} />
+      </Card.Body>
+    </Card>
+  );
 }
-
-export default StackedBarChartMemory;

@@ -1,84 +1,48 @@
-import React, {RefObject} from 'react';
-import Chart, {ChartConfiguration} from 'chart.js';
-import {Card} from 'react-bootstrap';
+import { useRef, useEffect } from "react";
+import Chart, { ChartConfiguration } from "chart.js/auto";
+import { Card } from "react-bootstrap";
 
 interface IStackedBarChart {
-    data: (number[])[];
+  data: number[][];
 }
 
-class StackedBarChartCPU extends React.Component<IStackedBarChart, IStackedBarChart> {
-    private stackedBarChartRef: RefObject<HTMLCanvasElement>;
+export default function StackedBarChartCPU({ data }: IStackedBarChart) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const chartRef = useRef<Chart | null>(null);
 
-    constructor(props: IStackedBarChart) {
-        super(props);
-        this.stackedBarChartRef = React.createRef();
-        this.drawStackedBarChart = this.drawStackedBarChart.bind(this);
+  useEffect(() => {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+
+    if (chartRef.current) {
+      chartRef.current.destroy();
     }
 
-    drawStackedBarChart() {
-        const canvas = this.stackedBarChartRef.current as HTMLCanvasElement;
-        const context = canvas.getContext('2d') as CanvasRenderingContext2D;
-        const data = {
-            labels: this.props.data[0].map((_, i) => `#${i + 1}`),
-            datasets: [
-                {
-                    label: 'user',
-                    backgroundColor: '#ff0000',
-                    data: [...this.props.data[0]]
-                },
-                {
-                    label: 'sys',
-                    backgroundColor: '#00ff00',
-                    data: [...this.props.data[1]]
-                },
-                {
-                    label: 'idle',
-                    backgroundColor: '#0000ff',
-                    data: [...this.props.data[2]]
-                }
-            ]
-        };
-        const configuration: ChartConfiguration = {
-            type: 'bar',
-            data: data,
-            options: {
-                animation: {
-                    duration: 0
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false
-                },
-                responsive: true,
-                scales: {
-                    xAxes: [{
-                        stacked: true
-                    }],
-                    yAxes: [{
-                        stacked: true
-                    }]
-                }
-            }
-        };
-        new Chart(context, configuration);
-    }
+    const chartData = {
+      labels: data[0].map((_, i) => `#${i + 1}`),
+      datasets: [
+        { label: "user", backgroundColor: "#ff0000", data: [...data[0]] },
+        { label: "sys", backgroundColor: "#00ff00", data: [...data[1]] },
+        { label: "idle", backgroundColor: "#0000ff", data: [...data[2]] },
+      ],
+    };
 
-    componentDidMount() {
-        this.drawStackedBarChart();
-    }
+    const config: ChartConfiguration = {
+      type: "bar",
+      data: chartData,
+      options: {
+        animation: { duration: 0 },
+        responsive: true,
+      },
+    };
 
-    componentDidUpdate(prevProps: Readonly<IStackedBarChart>, prevState: Readonly<IStackedBarChart>, snapshot?: any) {
-        this.drawStackedBarChart();
-    }
+    chartRef.current = new Chart(ctx, config);
+  }, [data]);
 
-    render() {
-        return (
-            <Card bg="light" text="dark" style={{width: "30rem"}}>
-                <Card.Header>CPU</Card.Header>
-                <canvas id="stackedBarChartCanvas" ref={this.stackedBarChartRef}/>
-            </Card>
-        );
-    }
+  return (
+    <Card bg="light" text="dark" style={{ width: "30rem" }}>
+      <Card.Header>CPU</Card.Header>
+      <canvas id="stackedBarChartCanvas" ref={canvasRef} />
+    </Card>
+  );
 }
-
-export default StackedBarChartCPU;

@@ -13,7 +13,7 @@ const initCpuData = [
 const TIMING = 3000;
 
 async function fetchData() {
-    const res = await fetch('/cpu_info');
+    const res = await fetch('http://localhost:50123/cpu_info');
     const data = JSON.parse((await res.json()).cpu_info);
     const {cpus, memory} = data;
     const minUser = Math.min.apply(null, cpus.map((i: any) => i.user)) - 1000;
