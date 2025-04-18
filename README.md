@@ -1,4 +1,4 @@
-# @localserve/react-cpu-monitor
+# gh:localserve/react-cpu-monitor
 
 Front end for @localserve/node-cpu-service
 
@@ -6,7 +6,7 @@ Front end for @localserve/node-cpu-service
 
 ## Usage
 
-It is dependent upon [cpu-service](https://github.com/localserve/node-cpu-service).
+It is dependent upon [gh: cpu-service](https://github.com/localserve/node-cpu-service) [npm: @localserve/node-cpu-service](https://www.npmjs.com/package/@localserve/node-cpu-service).
 
 0. `git clone git@github.com:localserve/react-cpu-monitor.git`
 1. `cd react-cpu-monitor`
